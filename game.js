@@ -229,7 +229,7 @@ function updateEnemy(){
 
 //this should work
 //it doesn't
-function updateENemyBullets(timeBullets){
+function updateENemyBullets(idx){
 	
 	//update all existing bullets
 	for(let i = 0; i < enemyBullets.length; i++){
@@ -241,11 +241,9 @@ function updateENemyBullets(timeBullets){
 		}
 	}
 	//from a random enemy
-	if(timeBullets > 1000/level){
-		let s=rand(0, enemies.length);
-		enemyBullets.push(new Bullet(enemies[s].x+30, enemies[s].y, ));
+	if(idx != -1){
+		enemyBullets.push(new Bullet(enemies[idx].x+30, enemies[idx].y, ));
 		updateBullets();
-		enemyBulletTime = time();
 	}
 
 }
@@ -312,8 +310,11 @@ function collisionEnemy(x, y){
 
 function enemyInput(e) {
 	let randint = Math.floor(Math.random() * 3) + 1; //random integer from 1 to 10
-	if (randint == 3) {
-		console.log('I love bacon')
+	for (i=0; i < enemies.length; i++){
+		if (Math.floor(Math.random() * 4) + 1 == 4){
+			updateENemyBullets(i) //implement the func
+		}
+
 	}
 }
 
