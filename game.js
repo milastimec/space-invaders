@@ -97,7 +97,6 @@ function playerInput (e) {
 			if(time - oldTime > 500){
 				bullets.push(new Bullet(player.x, player.y));
 				oldTime = time;
-				console.log(oldTime);
 				collisionEnemy();
 				updateBullets();
 			}
@@ -148,7 +147,7 @@ function drawBullets () {
 	updateBullets();
 }
 
-let oldTime = 0;
+oldTime = 0;
 let enemyBulletTime =0; //invader bullets
 let heroBulletTime=0; //hero bullets timer
 
@@ -172,10 +171,7 @@ function draw (time) {
 			updateEnemy();
 			oldTime = time;
 		}
-		if (enemyBulletTime > 300) {
-            updateEnemyBullets(newTime);
-            enemyBulletTime = time;
-        }
+
 
 		drawPlayer();	
 		drawBullets();
@@ -251,7 +247,7 @@ function updateEnemy(){
 
 //this should work
 //it doesn't
-function updateEnemyBullets(i){
+function updateEnemyBullets(idx){
 	
 	//update all existing bullets
 	for(let i = 0; i < enemyBullets.length; i++){
@@ -267,7 +263,6 @@ function updateEnemyBullets(i){
 
 	if (idx != -1) {
         enemyBullets.push(new Bullet(enemies[idx].x + 30, enemies[idx].y,));
-        updateEnemyBullets();
     }
 
 }
@@ -307,7 +302,7 @@ function enemyInput(e) {
 }
 //this should be okay
 //don't fucking know. no bullets are spawned
-function collisionHero(){
+function collisionHero(x,y){
 	let height = player.ship.height;
 	let width = player.ship.width;
 
