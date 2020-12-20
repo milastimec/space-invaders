@@ -75,8 +75,11 @@ function drawBackground () {
 
 }
 //timer!!!
+let oldTime = 0;
+
 function playerInput (e) {
-	console.log(e.keyCode);
+	let time = new Date;
+	time= time.getTime();
 
 	enemyInput();
 	//check for pressed buttons
@@ -88,15 +91,22 @@ function playerInput (e) {
 	else if (e.keyCode == "68") 
 		player.x += 5;
 
-		//pazi; bullet timer dodaj
+	//pazi; bullet timer dodaj
 	//"space"
 	else if (e.keyCode == "32") {
-			bullets.push(new Bullet(player.x, player.y));
-			collisionEnemy();
-			updateBullets();
-		
+			if(time - oldTime > 500){
+				bullets.push(new Bullet(player.x, player.y));
+				oldTime = time;
+				console.log(oldTime);
+				collisionEnemy();
+				updateBullets();
+			}
+			else{
+				return
+			}
 	}
 }
+
 
 //don't fucking touch
 function drawPlayer () {
@@ -162,6 +172,10 @@ function draw (time) {
 			updateEnemy();
 			oldTime = time;
 		}
+		if (enemyBulletTime > 300) {
+            updateEnemyBullets(newTime);
+            enemyBulletTime = time;
+        }
 
 		drawPlayer();	
 		drawBullets();
@@ -251,27 +265,27 @@ function updateEnemyBullets(i){
 	
 	//new bullets
 
-	enemyBullets.push(new Bullet (enemies[i], enemies[i]+3));
-	drawEnemyBullets();
-	console.log('I wanna shoot');
+	if (idx != -1) {
+        enemyBullets.push(new Bullet(enemies[idx].x + 30, enemies[idx].y,));
+        updateEnemyBullets();
+    }
 
 }
 
 //this is also supposed to work
 //of course it doesn't
 function drawEnemyBullets(){
-	//skips function if no bullets exist
-	if(enemyBullets.length == 0)
-		return;
+    //skips function if no bullets exist
+    if (enemyBullets.length == 0)
+        return;
 
-	//draw all still existing bullets
-	for(let i = 0; i < enemyBullets.length; i++){
-		console.log(enemyBullets[i]);
-		console.log(i);
-		buffer.beginPath();
-		buffer.arc(enemyBullets[i].x, enemyBullets[i].y, 2, 0, 2*Math.PI);
-		buffer.stroke();
-	}
+    //draw all still existing bullets
+    for (let i = 0; i < enemyBullets.length; i++) {
+        buffer.beginPath();
+        buffer.arc(enemyBullets[i].x, enemyBullets[i].y, 2, 0, 2 * Math.PI);
+        buffer.stroke();
+    }
+    updateEnemyBullets(-1);
 }
 
 //dela, pusti na miru!
@@ -297,13 +311,12 @@ function collisionHero(){
 	let height = player.ship.height;
 	let width = player.ship.width;
 
-	for(let i=0; i<enemyBullets.length; i++){
-		if(enemyBullets[i].y >= (player.y + height)){
-			if(enemyBullets[i].x >= (player.x) && enemyBullets[i].x <= (player.x + width)){
-				return false;
-			}
-		}
-	}
+    if (x < (player.x + 70)
+        && x > player.x
+        && y < (player.y + 50)
+        && y > player.y) {
+        return false;
+    }
 }
 
 
