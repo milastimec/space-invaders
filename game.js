@@ -79,41 +79,36 @@ function drawBackground() {
 //timer!!!
 let oldTime = 0;
 
-function playerInput (e) {
-	let time = new Date;
-	time= time.getTime();
+function playerInput(e) {
+    let time = new Date;
+    time = time.getTime();
 
-	enemyInput();
-	//check for pressed buttons
-	//"a"
-	if (e.keyCode == "65") 
-		player.x -= 5;
+    enemyInput(e);
 
-	//"d"
-	else if (e.keyCode == "68") 
-		player.x += 5;
+    enemyInput();
+    //check for pressed buttons
+    //"a"
+    if (e.keyCode == "65")
+        player.x -= 5;
 
-	//pazi; bullet timer dodaj
-	//"space"
-	else if (e.keyCode == "32") {
-			if(time - oldTime > 500){
-				bullets.push(new Bullet(player.x, player.y));
-				oldTime = time;
-				collisionEnemy();
-				updateBullets();
-			}
-			else{
-				return
-			}
-	}
+    //"d"
+    else if (e.keyCode == "68")
+        player.x += 5;
+
+        //pazi; bullet timer dodaj
+    //"space"
+    else if (e.keyCode == "32") {
+        if (time - oldTime > 500) {
+            bullets.push(new Bullet(player.x, player.y));
+            oldTime = time;
+            collisionEnemy();
+            updateBullets();
+        } else {
+            return
+        }
+    }
 }
 
-
-//don't fucking touch
-function drawPlayer () {
-	buffer.drawImage(player.ship, player.x-20, player.y, 40, 20);
-
-}
 
 //don't fucking touch
 function drawPlayer() {
@@ -138,60 +133,9 @@ function drawBullets() {
 
 
 oldTime = 0;
-let enemyBulletTime =0; //invader bullets
-let heroBulletTime=0; //hero bullets timer
-
-
-function draw (time) {
-	drawBackground();
-
-	let newTime = time - oldTime;
-	let newTimeHero = time - heroBulletTime;
-
-	
-	if(gamestate == 0){ 
-		
-		writeScore();
-
-		if(newTimeHero > 10){
-			drawPlayer();
-			heroBulletTime = time;
-		}
-		if(newTime > 2000){
-			updateEnemy();
-			oldTime = time;
-		}
-
-
-		drawPlayer();	
-		drawBullets();
-		drawEnemies();
-		drawEnemyBullets();
-		
-
-		if (collisionHero() == false){
-			gamestate = -1;
-			return
-		}
-		
-		if(gamestate == 1){
-			level++;
-			levelEnemy();
-			gamestate = 0; // create all enemies for that level
-
-			
-		}
-		window.requestAnimationFrame(draw);
-	
-	}
-	if(gamestate == -1){
-		return
-	}
-	
-
-let oldTime = 0;
 let enemyBulletTime = 0; //invader bullets
 let heroBulletTime = 0; //hero bullets timer
+
 
 
 function draw(time) {
@@ -296,12 +240,11 @@ function updateBullets() {
 
 }
 
-function updateENemyBullets(idx) {
+function updateEnemyBullets(idx) {
 
     //update all existing bullets
     for (let i = 0; i < enemyBullets.length; i++) {
         enemyBullets[i].y += 3;
-
 
 
         if (collisionHero(enemyBullets[i].x, enemyBullets[i].y)) {
@@ -326,7 +269,7 @@ function updateENemyBullets(idx) {
 //this is also supposed to work
 //of course it doesn't
 
-function drawEnemyBullets(){
+function drawEnemyBullets() {
 
     //skips function if no bullets exist
     if (enemyBullets.length == 0)
@@ -343,57 +286,35 @@ function drawEnemyBullets(){
 }
 
 //dela, pusti na miru!
-function drawEnemies(){
-	for(let i=0; i<enemies.length; i++){
-		buffer.drawImage(enemies[i].ship, enemies[i].x, enemies[i].y, 40, 20);
-	}
-}
- 
-//random bullet generator
-function enemyInput(e) {
-	let randint = Math.floor(Math.random() * 3) + 1; //random integer from 1 to 10
-	for (i=0; i < enemies.length; i++){
-		if (Math.floor(Math.random() * 4) + 1 == 4){
-			updateEnemyBullets(i) //implement the func
-		}
-
-	}
-
-}
-//this should be okay
-//don't fucking know. no bullets are spawned
-function collisionHero(x,y){
-	let height = player.ship.height;
-	let width = player.ship.width;
-
-    if (x < (player.x + 70)
-        && x > player.x
-        && y < (player.y + 50)
-        && y > player.y) {
-        return false;
+function drawEnemies() {
+    for (let i = 0; i < enemies.length; i++) {
+        buffer.drawImage(enemies[i].ship, enemies[i].x, enemies[i].y, 40, 20);
     }
 }
 
 
+//this should be okay
+//don't fucking know. no bullets are spawned
+
 
 //mal zjebe y os enemyjev ampak dela
-function collisionEnemy(x, y){
-	if(enemies.length == 0){
-		gamestate = 1;
-		return
-	}
-    for(let j=enemies.length-1; j>-1; j--){
+function collisionEnemy(x, y) {
+    if (enemies.length == 0) {
+        gamestate = 1;
+        return
+    }
+    for (let j = enemies.length - 1; j > -1; j--) {
 
 
         if (x < (enemies[j].x + 70)
             && x > enemies[j].x
             && y < (enemies[j].y + 50)
-			 && y > enemies[j].y
-			 && enemies[j].alive){
-                 enemies[j].alive = false;
-				updateEnemy();
-				score+=3;
-				return 1;
+            && y > enemies[j].y
+            && enemies[j].alive) {
+            enemies[j].alive = false;
+            updateEnemy();
+            score += 3;
+            return 1;
 
         }
     }
@@ -416,15 +337,34 @@ function collisionHero(x, y) {
 }
 
 
-
 function enemyInput(e) {
     for (i = 0; i < enemies.length; i++) {
         if (Math.floor(Math.random() * 30) + 1 == 4) {
             enemyBullets.push(new Bullet(enemies[i].x, enemies[i].y));
-            updateENemyBullets(i) //implement the func
+            updateEnemyBullets(i) //implement the func
         }
 
     }
+}
+
+
+function writeScore() {
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillText("Score: " + score, 400, 20);
+
+    ctx.fillText("level: " + level, 10, 20);
+}
+
+//function starup(){}
+function gameover() {
+    var background = new Image();
+    background.src = "gameover.jpg"
+    background.onload = function () {
+        ctx.drawImage(background, 0, 0);
+    }
+
+
 }
 
 function init() {
@@ -435,27 +375,9 @@ function init() {
     player = new Player(canvas.width / 2, canvas.height - 30, "ship.png");//"https://cdn.onlinewebfonts.com/svg/img_3969.png");
     level = 1;
     levelEnemy();
-    lives = 3;
 
     //start game
     //start up sequence
     draw();
 
-}
-
-function writeScore(){
-	ctx.font = "16px Arial";
-	ctx.fillStyle = "#FFFFFF";
-	ctx.fillText("Score: " + score, 400, 20);
-
-	ctx.fillText("level: "+level, 10, 20);
-}
-//function starup(){}
-function gameover(){
-	var background= new Image();
-	background.src = "gameover.jpg"
-	background.onload = function(){
-		ctx.drawImage(background, 0, 0);
-	}
-	
 }
