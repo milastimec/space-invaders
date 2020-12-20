@@ -77,6 +77,8 @@ function drawBackground () {
 function playerInput (e) {
 	console.log(e.keyCode);
 
+	enemyInput(e);
+
 	//check for pressed buttons
 	//"a"
 	if (e.keyCode == "65") 
@@ -308,7 +310,15 @@ function collisionEnemy(x, y){
 	}
 }
 
+function enemyInput(e) {
+	let randint = Math.floor(Math.random() * 3) + 1; //random integer from 1 to 10
+	if (randint == 3) {
+		console.log('I love bacon')
+	}
+}
+
 function init () {
+
 	document.addEventListener('keydown', playerInput);
 	initElements(); 
 	initBackground();
