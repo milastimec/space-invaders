@@ -141,6 +141,8 @@ let heroBulletTime = 0; //hero bullets timer
 function draw(time) {
     drawBackground();
 
+    writeScore();
+
     let newTime = time - oldTime;
     let newTimeHero = time - heroBulletTime;
 
@@ -171,7 +173,7 @@ function draw(time) {
 
     }
     if (gamestate == -1) {
-        //gameover();
+       return -1
     }
 
 
@@ -330,7 +332,7 @@ function collisionHero(x, y) {
         player.lives -= 1;
         // lost one life
         if (player.lives <= 0)
-            gameover();
+            gamestate=-1;
         return 1;
     }
 
@@ -356,14 +358,19 @@ function writeScore() {
     ctx.fillText("level: " + level, 10, 20);
 }
 
-//function starup(){}
 function gameover() {
-    var background = new Image();
-    background.src = "gameover.jpg"
-    background.onload = function () {
-        ctx.drawImage(background, 0, 0);
-    }
+  
+    ctx.font = "20px Arial";
+    ctx.textAlign= 'center';
+    ctx.fillStyle = "#FFFFFF";
 
+	ctx.fillText("GAME OVER!", 230, 100);
+
+	ctx.fillText("YOUR SCORE: "+ score, 230, 100);
+
+    ctx.fillText("YOUR LEVEL: "+ level, 230, 100);
+
+    window.requestAnimationFrame(gameover);
 
 }
 
@@ -379,5 +386,9 @@ function init() {
     //start game
     //start up sequence
     draw();
+
+    if(gamestate == -1){
+        gameover();
+    }
 
 }
