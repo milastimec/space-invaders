@@ -4,6 +4,7 @@ class Player {
         this.y = y;
         this.ship = new Image();
         this.ship.src = imageSource;
+        this.lives = 3;
     }
 }
 
@@ -103,25 +104,6 @@ function drawPlayer() {
     buffer.drawImage(player.ship, player.x - 20, player.y, 40, 20);
 }
 
-//don't fucking touch
-function updateBullets() {
-    //update all existing bullets
-    for (let i = 0; i < bullets.length; i++) {
-        bullets[i].y -= 3;
-
-        //if bullet is off-screen then remove it from array
-        if (bullets[i].y <= 0) {
-            bullets.splice(i, 1);
-            continue;
-        }
-
-        if (collisionEnemy(bullets[i].x, bullets[i].y)) {
-            bullets.splice(i, 1);
-        }
-
-    }
-
-}
 
 //don't fucking touch
 function drawBullets() {
@@ -160,19 +142,12 @@ function draw(time) {
             updateEnemy();
             oldTime = time;
         }
-        if (enemyBulletTime > 300) {
-            updateENemyBullets(newTime);
-            enemyBulletTime = time;
-        }
+
         drawPlayer();
         drawBullets();
         drawEnemies();
         drawEnemyBullets();
 
-
-        if (collisionHero() == false) {
-            return
-        }
 
         if (enemies.length == 0 && gamestate == 1) {
             level++;
@@ -230,14 +205,38 @@ function updateEnemy() {
 
 }
 
+//don't fucking touch
+function updateBullets() {
+    //update all existing bullets
+    for (let i = 0; i < bullets.length; i++) {
+        bullets[i].y -= 3;
 
-//this should work
-//it doesn't
+        //if bullet is off-screen then remove it from array
+        if (bullets[i].y <= 0) {
+            bullets.splice(i, 1);
+            continue;
+        }
+
+        if (collisionEnemy(bullets[i].x, bullets[i].y)) {
+            bullets.splice(i, 1);
+        }
+
+    }
+
+}
+
 function updateENemyBullets(idx) {
 
     //update all existing bullets
     for (let i = 0; i < enemyBullets.length; i++) {
         enemyBullets[i].y += 3;
+
+
+
+        if (collisionHero(enemyBullets[i].x, enemyBullets[i].y)) {
+            enemyBullets.splice(i, 1);
+            continue;
+        }
 
         //if bullet is off-screen then remove it from array
         if (enemyBullets[i].y >= player.y) {
@@ -249,6 +248,7 @@ function updateENemyBullets(idx) {
         enemyBullets.push(new Bullet(enemies[idx].x + 30, enemies[idx].y,));
         updateBullets();
     }
+
 
 }
 
@@ -290,7 +290,6 @@ function collisionEnemy(x, y) {
             && y > enemies[j].y
             && enemies[j].alive) {
             enemies[j].alive = false;
-            console.log("youre dead")
             return 1;
         }
     }
@@ -298,14 +297,14 @@ function collisionEnemy(x, y) {
 
 function collisionHero(x, y) {
 
-    let height = player.ship.height;
-    let width = player.ship.width;
 
     if (x < (player.x + 70)
         && x > player.x
         && y < (player.y + 50)
         && y > player.y) {
-        return false;
+        console.log("youre dead")
+        //implement game over here
+        return 1;
     }
 
 }
@@ -314,6 +313,7 @@ function collisionHero(x, y) {
 function enemyInput(e) {
     for (i = 0; i < enemies.length; i++) {
         if (Math.floor(Math.random() * 30) + 1 == 4) {
+            enemyBullets.push(new Bullet(enemies[i].x, enemies[i].y));
             updateENemyBullets(i) //implement the func
         }
 
