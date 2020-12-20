@@ -302,8 +302,11 @@ function collisionHero(x, y) {
         && x > player.x
         && y < (player.y + 50)
         && y > player.y) {
-        console.log("youre dead")
-        //implement game over here
+        player.lives -= 1;
+        // lost one life
+        if (player.lives <= 0)
+            console.log("youre dead")
+            //implement game over here
         return 1;
     }
 
