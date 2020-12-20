@@ -92,6 +92,9 @@ function playerInput(e) {
     //pazi; bullet timer dodaj
     //"space"
     if (e.keyCode == "32") {
+        if (bullets.length > 0 && bullets[bullets.length-1].y > 420){
+            return;
+        }
         bullets.push(new Bullet(player.x, player.y));
         collisionEnemy();
         updateBullets();
