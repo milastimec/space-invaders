@@ -35,6 +35,7 @@ let enemyBullets = [];
 let enemies = [];
 let level;
 let lives;
+let score = 0;
 
 let gamestate = 0; // o- playing, 1 - victory, -1 - lost
 
@@ -77,6 +78,7 @@ function drawBackground () {
 function playerInput (e) {
 	console.log(e.keyCode);
 
+	enemyInput();
 	//check for pressed buttons
 	//"a"
 	if (e.keyCode == "65") 
@@ -150,6 +152,8 @@ function draw (time) {
 	
 	if(gamestate == 0){ 
 		
+		writeScore();
+
 		if(newTimeHero > 10){
 			drawPlayer();
 			heroBulletTime = time;
@@ -158,10 +162,7 @@ function draw (time) {
 			updateEnemy();
 			oldTime = time;
 		}
-		if(enemyBulletTime > 300){
-			updateENemyBullets(newTime); 
-			enemyBulletTime = time;
-		}
+
 		drawPlayer();	
 		drawBullets();
 		drawEnemies();
@@ -169,19 +170,22 @@ function draw (time) {
 		
 
 		if (collisionHero() == false){
+			gamestate = -1;
 			return
 		}
 		
-		if(enemies.length == 0 && gamestate == 1){
+		if(gamestate == 1){
 			level++;
-			levelEnemy(); // create all enemies for that level
-			//level up sequence
+			levelEnemy();
+			gamestate = 0; // create all enemies for that level
+
+			
 		}
 		window.requestAnimationFrame(draw);
 	
 	}
 	if(gamestate == -1){
-		//gameover();
+		return
 	}
 	
 }
@@ -207,6 +211,11 @@ function updateEnemy(){
 			continue;
 		}
 		enemies[i].y += 5;
+
+		if(enemies[i].y >= player.y){
+			gamestate = -1;
+			return
+		}
 		if(enemyMove == 0){
 			enemies[i].x +=30;
 		}
@@ -217,6 +226,7 @@ function updateEnemy(){
 	if(enemies.length == 0){
 		gamestate = 1;
 	}
+	
 
 	if(enemyMove == 0){ enemyMove =1;}
 	else { enemyMove = 0;}
@@ -227,7 +237,7 @@ function updateEnemy(){
 
 //this should work
 //it doesn't
-function updateENemyBullets(timeBullets){
+function updateEnemyBullets(i){
 	
 	//update all existing bullets
 	for(let i = 0; i < enemyBullets.length; i++){
@@ -238,13 +248,12 @@ function updateENemyBullets(timeBullets){
 			enemyBullets.splice(i, 1);
 		}
 	}
-	//from a random enemy
-	if(timeBullets > 1000/level){
-		let s=rand(0, enemies.length);
-		enemyBullets.push(new Bullet(enemies[s].x+30, enemies[s].y, ));
-		updateBullets();
-		enemyBulletTime = time();
-	}
+	
+	//new bullets
+
+	enemyBullets.push(new Bullet (enemies[i], enemies[i]+3));
+	drawEnemyBullets();
+	console.log('I wanna shoot');
 
 }
 
@@ -272,15 +281,25 @@ function drawEnemies(){
 	}
 }
  
+//random bullet generator
+function enemyInput(e) {
+	let randint = Math.floor(Math.random() * 3) + 1; //random integer from 1 to 10
+	for (i=0; i < enemies.length; i++){
+		if (Math.floor(Math.random() * 4) + 1 == 4){
+			updateEnemyBullets(i) //implement the func
+		}
+
+	}
+}
 //this should be okay
 //don't fucking know. no bullets are spawned
 function collisionHero(){
-	let height = player.ship.src.height;
-	let width = player.ship.src.width;
+	let height = player.ship.height;
+	let width = player.ship.width;
 
 	for(let i=0; i<enemyBullets.length; i++){
 		if(enemyBullets[i].y >= (player.y + height)){
-			if(enemyBullets[i].x >= (player.x - width/2) && enemyBullets[i].x <= (player.x + width/2)){
+			if(enemyBullets[i].x >= (player.x) && enemyBullets[i].x <= (player.x + width)){
 				return false;
 			}
 		}
@@ -288,20 +307,28 @@ function collisionHero(){
 }
 
 
-//neki čudnega se tukaj dogaja
+//mal zjebe y os enemyjev ampak dela
 function collisionEnemy(x, y){
+	if(enemies.length == 0){
+		gamestate = 1;
+		return
+	}
 
 	let height = enemies[0].ship.height;
 	let width = enemies[0].ship.width;
+
+	
 
     for(let j=enemies.length-1; j>-1; j--){
 
         if(x  <  (enemies[j].x + 70)
             && x > enemies[j].x
             && y < (enemies[j].y + 50)
-             && y > enemies[j].y){
+			 && y > enemies[j].y
+			 && enemies[j].alive){
                  enemies[j].alive = false;
 				updateEnemy();
+				score+=3;
 				return 1;
         }
 	}
@@ -317,9 +344,24 @@ function init () {
 	lives=3;
 
 	//start game
-	//start up sequence
 	draw();
+
+	gameover();
 }
 
+function writeScore(){
+	ctx.font = "16px Arial";
+	ctx.fillStyle = "#FFFFFF";
+	ctx.fillText("Score: " + score, 400, 20);
+
+	ctx.fillText("level: "+level, 10, 20);
+}
 //function starup(){}
-//function gameover(){}
+function gameover(){
+	var background= new Image();
+	background.src = "gameover.jpg"
+	background.onload = function(){
+		ctx.drawImage(background, 0, 0);
+	}
+	
+}
