@@ -18,6 +18,7 @@ class Enemy {
 	constructor (x, y, imageSource){
 		this.x = x;
 		this.y = y;
+		this.alive = true;
 		this.ship = new Image();
 		this.ship.src = imageSource;
 	}
@@ -89,6 +90,7 @@ function playerInput (e) {
 	//"space"
 	else if (e.keyCode == "32") {
 			bullets.push(new Bullet(player.x, player.y));
+			collisionEnemy();
 			updateBullets();
 		
 	}
@@ -106,9 +108,17 @@ function updateBullets () {
 		bullets[i].y -= 3;
 		
 		//if bullet is off-screen then remove it from array 
-		if(bullets[i].y <= 0)
+		if(bullets[i].y <= 0){
 			bullets.splice(i, 1);
+			continue;
+		}
+
+		if(collisionEnemy(bullets[i].x, bullets[i].y)){
+			bullets.splice(i, 1);
+		}
+		
 	}
+
 }
 
 //don't fucking touch
@@ -156,7 +166,8 @@ function draw (time) {
 		drawBullets();
 		drawEnemies();
 		drawEnemyBullets();
-		collisionEnemy();
+		
+
 		if (collisionHero() == false){
 			return
 		}
@@ -191,6 +202,10 @@ function updateEnemy(){
 	//if they touch the floor it's game over
 
 	for(let i=0; i<enemies.length; i++){
+		if(enemies[i].alive == false){
+			enemies.splice(i, 1);
+			continue;
+		}
 		enemies[i].y += 5;
 		if(enemyMove == 0){
 			enemies[i].x +=30;
@@ -198,6 +213,9 @@ function updateEnemy(){
 		else{
 			enemies[i].x -=30;
 		}
+	}
+	if(enemies.length == 0){
+		gamestate = 1;
 	}
 
 	if(enemyMove == 0){ enemyMove =1;}
@@ -269,27 +287,23 @@ function collisionHero(){
 	}
 }
 
-function collisionEnemy(){
 
-	let height = enemies[0].ship.src.height;
-	let width = enemies[0].ship.src.width;
+//neki čudnega se tukaj dogaja
+function collisionEnemy(x, y){
 
-	for(let i=0; i<bullets.length; i++){
-		for(let j=0; j<enemies.length; j++){
-			if(bullets[i].x  < (enemies[j].x + width) && bullets[i].x > enemies[j].x){
-				if(bullets.y > 15){
-					console.log('whatever');
-				}
-				if(bullets[i].y < (enemies[j].y + height) && bullets[i].j > enemies[i].y){
-					enemies.splice(j, 1);
-					bullets.splice(i, 1);
+	let height = enemies[0].ship.height;
+	let width = enemies[0].ship.width;
 
-					updateBullets();
-					updateEnemy();
-				}
-			}
-			
-		}
+    for(let j=enemies.length-1; j>-1; j--){
+
+        if(x  <  (enemies[j].x + 70)
+            && x > enemies[j].x
+            && y < (enemies[j].y + 50)
+             && y > enemies[j].y){
+                 enemies[j].alive = false;
+				updateEnemy();
+				return 1;
+        }
 	}
 }
 
