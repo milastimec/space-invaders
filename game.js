@@ -173,7 +173,8 @@ function draw(time) {
 
     }
     if (gamestate == -1) {
-       return -1
+        console.log('gameover');
+       gameover();
     }
 
 
@@ -366,9 +367,9 @@ function gameover() {
 
 	ctx.fillText("GAME OVER!", 230, 100);
 
-	ctx.fillText("YOUR SCORE: "+ score, 230, 100);
+	ctx.fillText("YOUR SCORE: "+ score, 230, 150);
 
-    ctx.fillText("YOUR LEVEL: "+ level, 230, 100);
+    ctx.fillText("YOUR LEVEL: "+ level, 230, 170);
 
     window.requestAnimationFrame(gameover);
 
@@ -387,8 +388,5 @@ function init() {
     //start up sequence
     draw();
 
-    if(gamestate == -1){
-        gameover();
-    }
 
 }
