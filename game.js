@@ -299,7 +299,8 @@ function collisionEnemy(x, y){
         if(x  <  (enemies[j].x + 70)
             && x > enemies[j].x
             && y < (enemies[j].y + 50)
-             && y > enemies[j].y){
+			&& y > enemies[j].y
+			&&enemies[j].alive){
                  enemies[j].alive = false;
 				updateEnemy();
 				return 1;
