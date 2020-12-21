@@ -167,6 +167,7 @@ function draw(time) {
         if (enemies.length == 0 && gamestate == 1) {
             level++;
             levelEnemy(); // create all enemies for that level
+            gamestate = 0;
             //level up sequence
         }
         window.requestAnimationFrame(draw);
